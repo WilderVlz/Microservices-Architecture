@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: msvc-student
+  config:
+    # with this we indicate the path where the configuration file is located and the port where the configuration server is running
+    import: optional:configserver:http://localhost:8888

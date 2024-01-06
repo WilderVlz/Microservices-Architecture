@@ -1,0 +1,29 @@
+# this is the port on which the microservice will run
+server:
+  port: 9090
+
+spring:
+  application:
+    # name of the microservice
+    name: msvc-course
+    # configuration of the connection to the database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/coursesDb
+    username: root
+    password: 123
+  jpa:
+    hibernate:
+      # used to create tables in the database based on entities
+      ddl-auto: create
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+# with this we will register this microservice in the eureka discovery server
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
