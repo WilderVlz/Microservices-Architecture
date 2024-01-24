@@ -11,7 +11,7 @@ spring:
 eureka:
   instance:
     # this is the host where eureka will run
-    hostname: localhost
+    hostname: micro-eureka-compose
   client:
     # with this we avoid that eureka registers itself in the eureka server
     register-with-eureka: false
@@ -19,4 +19,4 @@ eureka:
     fetch-registry: false
     # with this we indicate the path in which the eureka server will work
     server-url:
-      defaultZone: http://localhost:${server.port}/eureka/
+      defaultZone: http://micro-eureka-compose:${server.port}/eureka/

@@ -4,4 +4,4 @@ spring:
     name: msvc-course
   config:
     # with this we indicate the path where the configuration file is located and the port
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://micro-config-compose:8888

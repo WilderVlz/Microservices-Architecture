@@ -1,6 +1,6 @@
-package com.microservice.course.entities;
+package com.microservice.student.controller.dto.responseDto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,19 +10,15 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-@Entity
-@Builder
-@Table(name = "courses")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Course implements Serializable {
+@Builder
+public class StudentResponseDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String name;
-    private String teacher;
+    private String lastName;
+    private String email;
 }

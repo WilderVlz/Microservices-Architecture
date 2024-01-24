@@ -1,33 +1,35 @@
-# we do this to make sure that the gateway is not registered with the eureka server
+# Configuración Eureka
 eureka:
   client:
-    register-with-eureka: false
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://micro-eureka-compose:8761/eureka
 
+# Configuración del servidor de la puerta de enlace
 server:
-  # the gateway runs on port 8080 because that is where we will make all the requests
   port: 8080
 
+# Configuración de la aplicación Spring
 spring:
   application:
-    # name of the gateway
     name: msvc-gateway
   cloud:
     gateway:
       discovery:
-        # we enable the gateway
         locator:
           enabled: true
-          # we configure the gateway to know where to redirect requests
       routes:
-        # the id is simply an identifier for the route
         - id: students
-            # the uri is the path where the requests will be redirected
-          uri: http://localhost:8090
-          # the predicate is the condition that the request must meet in order to be redirected
+          uri: http://micro-student-compose:8030
           predicates:
             - Path=/api/student/**
-          # we configure another route for another different microservice doing the same as with the previous one
+
         - id: courses
-          uri: http://localhost:9090
+          uri: http://micro-course-compose:8010
           predicates:
             - Path=/api/course/**
+        - id: security
+          uri: http://micro-security-compose:8020
+          predicates:
+            - Path=/api/auth/**
+            - Path=/api/user/**

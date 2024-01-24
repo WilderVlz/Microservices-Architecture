@@ -1,0 +1,121 @@
+version: "3.9"
+
+services:
+  micro-mysql-compose:
+    container_name: micro-mysql-compose
+    # restart is used to restart the container in any case other options are "no, on-failure, unless-stopped"
+    restart: always
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      # these are free use names we can use any name we want
+      # the values can be any type of value like boolean, string, number, etc
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: studentDb
+    networks:
+      - microservice-network-v1
+
+  micro-postgres-compose:
+    container_name: micro-postgres-compose
+    restart: always
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: coursesDb
+    networks:
+      - microservice-network-v1
+
+  micro-config-compose:
+    container_name: micro-config-compose
+    restart: always
+    image: micro-config-c:1.0
+    build: ./microservice-config/
+    ports:
+      - 8888:8888
+    networks:
+      - microservice-network-v1
+
+  micro-course-compose:
+    container_name: micro-course-compose
+    restart: always
+    image: micro-course-c:1.0
+    build: ./microservice-course/
+    ports:
+      - 8010:8010
+    environment:
+      - DATABASE_URL=jdbc:postgresql://micro-postgres-compose:5432/coursesDb
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=123
+      - DATABASE_DRIVER_CLASS_NAME=org.postgresql.Driver
+    depends_on:
+      micro-config-compose:
+        condition: service_completed_successfully
+      micro-postgres-compose:
+        condition: service_completed_successfully
+      micro-eureka-compose:
+        condition: service_completed_successfully
+    networks:
+      - microservice-network-v1
+
+  micro-eureka-compose:
+    container_name: micro-eureka-compose
+    restart: always
+    image: micro-eureka-c:1.0
+    build: ./microservice-eureka/
+    ports:
+      - 8761:8761
+    depends_on:
+      micro-config-compose:
+        condition: service_completed_successfully
+    networks:
+      - microservice-network-v1
+
+  micro-gateway-compose:
+    container_name: micro-gateway-compose
+    restart: always
+    image: micro-gateway-c:1.0
+    build: ./microservice-gateway/
+    ports:
+      - 8080:8080
+    depends_on:
+      micro-config-compose:
+        condition: service_completed_successfully
+      micro-course-compose:
+        condition: service_completed_successfully
+      micro-student-compose:
+        condition: service_completed_successfully
+    networks:
+      - microservice-network-v1
+
+  micro-student-compose:
+    container_name: micro-student-compose
+    restart: always
+    image: micro-student-c:1.0
+    build: ./microservice-student/
+    ports:
+      - 8030:8030
+    environment:
+      - DATABASE_URL=jdbc:mysql://micro-mysql-compose:3306/studentDb
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=123
+      - DATABASE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+    depends_on:
+      micro-config-compose:
+        condition: service_completed_successfully
+      micro-mysql-compose:
+        condition: service_completed_successfully
+      micro-eureka-compose:
+        condition: service_completed_successfully
+    networks:
+      - microservice-network-v1
+
+networks:
+  microservice-network-v1:
+    name: micro_net
+    driver: bridge
+    ipam:
+      driver: default

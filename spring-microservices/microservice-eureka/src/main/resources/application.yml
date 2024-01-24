@@ -3,4 +3,4 @@ spring:
     name: msvc-eureka
   config:
     # this is the path where the configuration file is located and the port where the configuration server is running
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://micro-config-compose:8888
